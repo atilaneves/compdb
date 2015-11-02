@@ -1,9 +1,9 @@
-;;; compdb.el --- Calls CMake to find out include paths and other compiler flags -*- lexical-binding: t; -*-
+;;; compdb.el --- Package to read JSON compilation databases -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2014 Atila Neves
 
 ;; Author:  Atila Neves <atila.neves@gmail.com>
-;; Version: 0.2
+;; Version: 0.1
 ;; Package-Requires: ((emacs "24.1"))
 ;; Keywords: languages
 ;; URL: http://github.com/atilaneves/compdb
@@ -23,12 +23,8 @@
 
 ;;; Commentary:
 
-;; This package runs CMake and sets variables for IDE-like functionality
-;; provided by other packages such as:
-;; On the fly syntax checks with flycheck
-;; auto-completion using auto-complete-clang or company-clang
-;; Jump to definition and refactoring with rtags
-;; These other packages must be installed for the functionality to work
+;; This package reads compilation databases in JSON format and makes
+;; their information easily accesible.
 
 ;;; Usage:
 
