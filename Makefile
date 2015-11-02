@@ -13,7 +13,7 @@ unit:
 	${CASK} exec ert-runner
 
 compile:
-	${CASK} exec ${EMACS} -Q -batch -f batch-byte-compile cmake-ide.el
+	${CASK} exec ${EMACS} -Q -batch -f batch-byte-compile compdb.el
 
 clean-elc:
 	rm -f *.elc

@@ -442,5 +442,5 @@ flags."
                                                 cmake-ide-rdm-executable))))))
 
 
-(provide 'cmake-ide)
-;;; cmake-ide.el ends here
+(provide 'compdb)
+;;; compdb.el ends here

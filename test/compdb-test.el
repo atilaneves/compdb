@@ -30,7 +30,7 @@
 (add-to-list 'load-path cmake-ide--root-path)
 
 (require 'ert)
-(require 'cmake-ide)
+(require 'compdb)
 (require 'cl)
 
 
