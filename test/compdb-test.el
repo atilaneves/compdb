@@ -1,4 +1,4 @@
-;;; cmake-ide-test.el --- Unit tests for cmake-ide.
+;;; compdb-test.el --- Unit tests for compdb.
 
 ;; Copyright (C) 2014
 
@@ -25,9 +25,9 @@
 ;;; Code:
 (require 'f)
 
-(setq cmake-ide--test-path (f-dirname load-file-name))
-(setq cmake-ide--root-path (f-parent cmake-ide--test-path))
-(add-to-list 'load-path cmake-ide--root-path)
+(setq compdb--test-path (f-dirname load-file-name))
+(setq compdb--root-path (f-parent compdb--test-path))
+(add-to-list 'load-path compdb--root-path)
 
 (require 'ert)
 (require 'compdb)
@@ -37,89 +37,89 @@
 (ert-deftest test-json-to-file-params ()
   (let* ((json-str "[{\"directory\": \"/foo/bar/dir\",
                       \"command\": \"do the twist\", \"file\": \"/foo/bar/dir/foo.cpp\"}]")
-         (json (cmake-ide--string-to-json json-str))
-         (real-params (cmake-ide--file-params json "/foo/bar/dir/foo.cpp"))
-         (fake-params (cmake-ide--file-params json "oops")))
-    (should (equal (cmake-ide--get-file-param 'directory real-params) "/foo/bar/dir"))
-    (should (equal (cmake-ide--get-file-param 'directory fake-params) nil))))
+         (json (compdb--string-to-json json-str))
+         (real-params (compdb--file-params json "/foo/bar/dir/foo.cpp"))
+         (fake-params (compdb--file-params json "oops")))
+    (should (equal (compdb--get-file-param 'directory real-params) "/foo/bar/dir"))
+    (should (equal (compdb--get-file-param 'directory fake-params) nil))))
 
 
 (ert-deftest test-params-to-src-flags-1 ()
-  (let* ((json (cmake-ide--string-to-json
+  (let* ((json (compdb--string-to-json
                 "[{\"file\": \"file1\",
                   \"command\": \"cmd1 -Ifoo -Ibar\"},
                  {\"file\": \"file2\",
                   \"command\": \"cmd2 foo bar -g -pg -Ibaz -Iboo -Dloo\"}]"))
-         (file-params (cmake-ide--file-params json "file1")))
-    (should (equal (cmake-ide--params-to-src-flags file-params)
+         (file-params (compdb--file-params json "file1")))
+    (should (equal (compdb--params-to-src-flags file-params)
                    '("-Ifoo" "-Ibar")))))
 
 (ert-deftest test-params-to-src-flags-2 ()
-  (let* ((json (cmake-ide--string-to-json
+  (let* ((json (compdb--string-to-json
                 "[{\"file\": \"file1\",
                   \"command\": \"cmd1 -Ifoo -Ibar\"},
                  {\"file\": \"file2\",
                   \"command\": \"cmd2 foo bar -g -pg -Ibaz -Iboo -Dloo\"}]"))
-         (file-params (cmake-ide--file-params json "file2")))
-    (should (equal (cmake-ide--params-to-src-flags file-params)
+         (file-params (compdb--file-params json "file2")))
+    (should (equal (compdb--params-to-src-flags file-params)
                    '("-Ibaz" "-Iboo" "-Dloo")))))
 
 
 (ert-deftest test-flags-to-include-paths ()
-  (should (equal (cmake-ide--flags-to-include-paths '("-Ifoo" "-Ibar")) '("foo" "bar")))
-  (should (equal (cmake-ide--flags-to-include-paths '("-Iboo" "-Ibaz" "-Dloo" "-Idoo")) '("boo" "baz" "doo"))))
+  (should (equal (compdb--flags-to-include-paths '("-Ifoo" "-Ibar")) '("foo" "bar")))
+  (should (equal (compdb--flags-to-include-paths '("-Iboo" "-Ibaz" "-Dloo" "-Idoo")) '("boo" "baz" "doo"))))
 
 
 (ert-deftest test-flags-to-defines ()
-  (should (equal (cmake-ide--flags-to-defines '("-Ifoo" "-Ibar")) nil))
-  (should (equal (cmake-ide--flags-to-defines '("-Iboo" "-Ibaz" "-Dloo" "-Idoo")) '("loo"))))
+  (should (equal (compdb--flags-to-defines '("-Ifoo" "-Ibar")) nil))
+  (should (equal (compdb--flags-to-defines '("-Iboo" "-Ibaz" "-Dloo" "-Idoo")) '("loo"))))
 
 
 (ert-deftest test-is-src-file ()
-  (should (not (eq (cmake-ide--is-src-file "foo.c") nil)))
-  (should (not (eq (cmake-ide--is-src-file "foo.cpp") nil)))
-  (should (not (eq (cmake-ide--is-src-file "foo.C") nil)))
-  (should (not (eq (cmake-ide--is-src-file "foo.cxx") nil)))
-  (should (not (eq (cmake-ide--is-src-file "foo.cc") nil)))
-  (should (eq (cmake-ide--is-src-file "foo.h") nil))
-  (should (eq (cmake-ide--is-src-file "foo.hpp") nil))
-  (should (eq (cmake-ide--is-src-file "foo.hxx") nil))
-  (should (eq (cmake-ide--is-src-file "foo.H") nil))
-  (should (eq (cmake-ide--is-src-file "foo.hh") nil))
-  (should (eq (cmake-ide--is-src-file "foo.d") nil))
-  (should (eq (cmake-ide--is-src-file "foo.py") nil)))
+  (should (not (eq (compdb--is-src-file "foo.c") nil)))
+  (should (not (eq (compdb--is-src-file "foo.cpp") nil)))
+  (should (not (eq (compdb--is-src-file "foo.C") nil)))
+  (should (not (eq (compdb--is-src-file "foo.cxx") nil)))
+  (should (not (eq (compdb--is-src-file "foo.cc") nil)))
+  (should (eq (compdb--is-src-file "foo.h") nil))
+  (should (eq (compdb--is-src-file "foo.hpp") nil))
+  (should (eq (compdb--is-src-file "foo.hxx") nil))
+  (should (eq (compdb--is-src-file "foo.H") nil))
+  (should (eq (compdb--is-src-file "foo.hh") nil))
+  (should (eq (compdb--is-src-file "foo.d") nil))
+  (should (eq (compdb--is-src-file "foo.py") nil)))
 
 
 (ert-deftest test-commands-to-hdr-flags-1 ()
-  (let* ((json (cmake-ide--string-to-json
+  (let* ((json (compdb--string-to-json
                 "[{\"file\": \"/dir1/file1.h\",
                   \"command\": \"cmd1 -Ifoo -Ibar\"}]"))
-         (commands (mapcar (lambda (x) (cmake-ide--get-file-param 'command x)) json)))
+         (commands (mapcar (lambda (x) (compdb--get-file-param 'command x)) json)))
 
-    (should (equal (cmake-ide--commands-to-hdr-flags commands)
+    (should (equal (compdb--commands-to-hdr-flags commands)
                    '("-Ifoo" "-Ibar")))))
 
 (ert-deftest test-commands-to-hdr-flags-2 ()
-  (let* ((json (cmake-ide--string-to-json
+  (let* ((json (compdb--string-to-json
                 "[{\"file\": \"/dir1/file1.h\",
                   \"command\": \"cmd1 -Ifoo -Ibar\"},
                  {\"file\": \"/dir2/file2.h\",
                   \"command\": \"cmd2 -Iloo -Dboo\"}]"))
-         (commands (mapcar (lambda (x) (cmake-ide--get-file-param 'command x)) json)))
+         (commands (mapcar (lambda (x) (compdb--get-file-param 'command x)) json)))
 
-    (should (equal (cmake-ide--commands-to-hdr-flags commands)
+    (should (equal (compdb--commands-to-hdr-flags commands)
                    '("-Ifoo" "-Ibar" "-Iloo" "-Dboo")))))
 
 (ert-deftest test-commands-to-hdr-flags-3 ()
-  (let* ((json (cmake-ide--string-to-json
+  (let* ((json (compdb--string-to-json
                 "[{\"file\": \"/dir1/file1.h\",
                   \"command\": \"cmd1 -Ifoo -Ibar\"},
                  {\"file\": \"/dir2/file2.h\",
                   \"command\": \"cmd2 -Iloo -Dboo\"},
                  {\"file\": \"/dir2/file2.h\",
                   \"command\": \"cmd2 -Iloo -Dboo\"}]"))
-         (commands (mapcar (lambda (x) (cmake-ide--get-file-param 'command x)) json)))
-    (should (equal (cmake-ide--commands-to-hdr-flags commands)
+         (commands (mapcar (lambda (x) (compdb--get-file-param 'command x)) json)))
+    (should (equal (compdb--commands-to-hdr-flags commands)
                    '("-Ifoo" "-Ibar" "-Iloo" "-Dboo")))))
 
 (defun equal-lists (lst1 lst2)
@@ -129,47 +129,47 @@
 
 
 (ert-deftest test-params-to-src-includes-1 ()
-  (let* ((json (cmake-ide--string-to-json
+  (let* ((json (compdb--string-to-json
                 "[{\"file\": \"file1\",
                 \"command\": \"cmd1 -Ifoo -Ibar -include /foo/bar.h -include a.h\"},
                {\"file\": \"file2\",
                 \"command\": \"cmd2 foo bar -g -pg -Ibaz -Iboo -Dloo -include h.h\"}]"))
-         (file-params (cmake-ide--file-params json "file1")))
+         (file-params (compdb--file-params json "file1")))
 
     (should (equal-lists
-             (cmake-ide--params-to-src-includes file-params)
+             (compdb--params-to-src-includes file-params)
              '("/foo/bar.h" "a.h")))))
 
 (ert-deftest test-params-to-src-includes-2 ()
-  (let* ((json (cmake-ide--string-to-json
+  (let* ((json (compdb--string-to-json
                 "[{\"file\": \"file1\",
                   \"command\": \"cmd1 -Ifoo -Ibar -include /foo/bar.h -include a.h\"},
                   {\"file\": \"file2\",
                    \"command\": \"cmd2 foo bar -g -pg -Ibaz -Iboo -Dloo -include h.h\"}]"))
-         (file-params (cmake-ide--file-params json "file2")))
+         (file-params (compdb--file-params json "file2")))
     (should (equal-lists
-             (cmake-ide--params-to-src-includes file-params)
+             (compdb--params-to-src-includes file-params)
              '("h.h")))))
 
 (ert-deftest test-commands-to-hdr-includes-1 ()
-  (let* ((json (cmake-ide--string-to-json
+  (let* ((json (compdb--string-to-json
                 "[{\"file\": \"file1\",
                   \"command\": \"cmd1 -Ifoo -Ibar -include /foo/bar.h -include a.h\"},
                   {\"file\": \"file2\",
                    \"command\": \"cmd2 foo bar -g -pg -Ibaz -Iboo -Dloo -include h.h\"}]"))
-         (commands (mapcar (lambda (x) (cmake-ide--get-file-param 'command x)) json)))
-    (should (equal-lists (cmake-ide--commands-to-hdr-includes commands)
+         (commands (mapcar (lambda (x) (compdb--get-file-param 'command x)) json)))
+    (should (equal-lists (compdb--commands-to-hdr-includes commands)
                          '("/foo/bar.h" "a.h" "h.h")))))
 
 (ert-deftest test-commands-to-hdr-includes-2 ()
-  (let* ((json (cmake-ide--string-to-json
+  (let* ((json (compdb--string-to-json
                 "[{\"file\": \"file1\",
                   \"command\": \"cmd1 -Ifoo -Ibar -include /foo/bar.h -include a.h\"},
                   {\"file\": \"file2\",
                    \"command\": \"cmd2 foo bar -g -pg -Ibaz -Iboo -Dloo -include h.h\"}]"))
-         (commands (mapcar (lambda (x) (cmake-ide--get-file-param 'command x)) json)))
-    (should (equal-lists (cmake-ide--commands-to-hdr-includes commands)
+         (commands (mapcar (lambda (x) (compdb--get-file-param 'command x)) json)))
+    (should (equal-lists (compdb--commands-to-hdr-includes commands)
                          '("/foo/bar.h" "a.h" "h.h")))))
 
-(provide 'cmake-ide-test)
-;;; cmake-ide-test.el ends here
+(provide 'compdb-test)
+;;; compdb-test.el ends here
